@@ -1,5 +1,5 @@
-import { useState } from "react";
-import App from "../App";
+// SignUpForm.jsx
+import React, { useState } from "react";
 
 export default function SignUpForm({ setToken }) {
   const [username, setUsername] = useState("");
@@ -8,49 +8,53 @@ export default function SignUpForm({ setToken }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
+
     try {
-      const response = await fetch(
-        "https://fsa-jwt-practice.herokuapp.com/signup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-        }
-      );
+      const response = await fetch("https://fsa-jwt-practice.herokuapp.com/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      console.log(response);
+
       if (response.ok) {
         const result = await response.json();
-        console.log(result);
+        setToken(result.token);
       } else {
-        setError("Error while signing up");
+        setError("Sign-up failed. Please try again.");
       }
     } catch (error) {
-      setError(error.message);
+      setError("An error occurred. Please try again later.");
     }
   }
+
   return (
-    <>
-      <h2>Sign Up</h2>
-      {error && <p>{error}</p>}
+    <div>
+      <h2>Sign Up!</h2>
+      {error && <p>Error: {error}</p>}
       <form onSubmit={handleSubmit}>
         <label>
-          Username:{" "}
+          Username:
           <input
+            type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </label>
+        <br />
         <label>
-          Password:{" "}
+          Password:
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button>Submit</button>
+        <br />
+        <button type="submit">Submit</button>
       </form>
-    </>
+    </div>
   );
 }
